@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCalc</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        body {
+            background-color: #d6d6d6;
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            place-items: center;
+        }
+
+        .calc-container {
+            border-radius: 5%;
+            box-shadow: 5px 5px 10px #c5c5c5,
+                -5px -5px 10px #fbfbfb;
+            border: none;
+            width: 400px;
+            height: 570px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .display-container {
+            border-radius: 10px;
+            margin-top: 5%;
+            width: 90%;
+            height: 10%;
+            background-color: chartreuse;
+            border-radius: 50px;
+            background: #e0e0e0;
+            box-shadow: inset 20px 20px 60px #bebebe,
+                inset -20px -20px 60px #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .display {
+            width: 90%;
+            height: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            font-size: 35px;
+            overflow-x: hidden;
+        }
+
+
+
+        .button-container {
+            width: 85%;
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            grid-template-areas:
+                "c pc cx cd"
+                "n7 n8 n9 cm"
+                "n4 n5 n6 cmm"
+                "n1 n2 n3 cmm"
+                "n0 n0 cp ci"
+            ;
+        }
+
+
+
+        .button {
+            border-radius: 5px;
+            background: #e0e0e0;
+            box-shadow: 5px 5px 10px #c5c5c5b0,
+                -5px -5px 10px #fbfbfba4;
+            border: none;
+            padding: 22px;
+        }
+
+        .button:hover {
+            border-radius: 10px;
+            background: #f0f0f0;
+
+        }
+
+        .button:active {
+            border-radius: 10px;
+            background: linear-gradient(145deg, #009771, #00b487);
+            color: white;
+        }
+
+        #n1 {
+            grid-area: n1;
+        }
+
+        #n2 {
+            grid-area: n2;
+        }
+
+        #n3 {
+            grid-area: n3;
+        }
+
+        #n4 {
+            grid-area: n4;
+        }
+
+        #n5 {
+            grid-area: n5;
+        }
+
+        #n6 {
+            grid-area: n6;
+        }
+
+        #n7 {
+            grid-area: n7;
+        }
+
+        #n8 {
+            grid-area: n8;
+        }
+
+        #n9 {
+            grid-area: n9;
+        }
+
+        #n0 {
+            grid-area: n0;
+        }
+
+        #c {
+            grid-area: c;
+        }
+
+        #pc {
+            grid-area: pc;
+        }
+
+        #cx {
+            grid-area: cx;
+        }
+
+        #cm {
+            grid-area: cm;
+        }
+
+        #cmm {
+            grid-area: cmm;
+        }
+
+        #cd {
+            grid-area: cd;
+        }
+
+        #ci {
+            grid-area: ci;
+        }
+
+        #cp {
+            grid-area: cp;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="calc-container">
+        <div class="display-container">
+            <div class="display"></div>
+        </div>
+        <div class="button-container">
+            <button id="n1" class="button number" onclick="incluirDigito('1')">1</button>
+            <button id="n2" class="button number" onclick="incluirDigito('2')">2</button>
+            <button id="n3" class="button number" onclick="incluirDigito('3')">3</button>
+            <button id="n4" class="button number" onclick="incluirDigito('4')">4</button>
+            <button id="n5" class="button number" onclick="incluirDigito('5')">5</button>
+            <button id="n6" class="button number" onclick="incluirDigito('6')">6</button>
+            <button id="n7" class="button number" onclick="incluirDigito('7')">7</button>
+            <button id="n8" class="button number" onclick="incluirDigito('8')">8</button>
+            <button id="n9" class="button number" onclick="incluirDigito('9')">9</button>
+            <button id="n0" class="button number" onclick="incluirDigito('0')">0</button>
+            <button id="cx" class="button calc" onclick="iniciarCalculo('*')">*</button>
+            <button id="cd" class="button calc" onclick="iniciarCalculo('/')">/</button>
+            <button id="cm" class="button calc" onclick="iniciarCalculo('-')">-</button>
+            <button id="cmm" class="button calc" onclick="iniciarCalculo('+')">+</button>
+            <button id="ci" class="button calc" onclick="igual()">=</button>
+            <button id="c" class="button calc" onclick="limpar()">C</button>
+            <button id="pc" class="button calc" onclick="porcento()">%</button>
+            <button id="cp" class="button calc" onclick="ponto()">.</button>
+        </div>
+    </div>
+
+
+    <script>
+
+        let n1 = '0'
+        let operacao = null
+        let n2 = ''
+        let igualActive = false
+        let _porcento = null
+
+        function incluirDigito(digito) {
+
+            if (n2 && operacao && igualActive) {
+                igualActive = false
+                limpar()
+                n1 = digito
+                mostrarNoDisplay(n1)
+                return
+            }
+
+            if (operacao !== null) {
+                n2 += digito
+                mostrarNoDisplay(n2)
+                console.log("n2: " + n2)
+
+            } else {
+
+                if (n1 === '0') {
+                    n1 = digito
+
+                } else {
+                    n1 += digito
+                }
+
+                console.log("n1: " + n1)
+                mostrarNoDisplay(n1)
+            }
+
+
+        }
+
+        function calcular() {
+            let nCalculado = 0
+            let _n1 = parseFloat(n1)
+            let _n2 = parseFloat(n2)
+
+            switch (operacao) {
+
+                case '+':
+                    nCalculado = _n1 + _n2
+                    break
+
+                case '-':
+                    nCalculado = _n1 - _n2
+                    break
+
+                case '/':
+                    nCalculado = _n1 / _n2
+                    break
+
+                case '*':
+                    nCalculado = _n1 * _n2
+                    break
+            }
+
+            return nCalculado
+        }
+
+        function iniciarCalculo(simbolo) {
+            if (igualActive) {
+                igualActive = false
+                n2 = ''
+            }
+
+            if (operacao === null || n2 === '') {
+                operacao = simbolo
+
+            } else {
+                let resultado = calcular()
+                n1 = resultado
+                operacao = simbolo
+                n2 = ''
+                mostrarNoDisplay(n1)
+            }
+
+        }
+
+        function ponto() {
+            if (operacao && n2 === '') {
+                n2 = '0.'
+            } else if (operacao && n2) {
+                n2 += '.'
+            } else {
+                n1 += '.'
+            }
+        }
+
+        function limpar() {
+            n1 = '0'
+            operacao = null
+            n2 = ''
+            mostrarNoDisplay(n1)
+        }
+
+
+        function igual() {
+            igualActive = true
+            let igual = calcular()
+            n1 = igual
+            mostrarNoDisplay(n1)
+        }
+
+        function porcento() {
+
+            if (!n2) {
+                limpa()
+                n2 = ''
+                mostrarNoDisplay(n1)
+            } else if (operacao === '+' || operacao === '-') {
+                _porcento = n1 * n2 / 100;
+            } else {
+                _porcento = n2 / 100;
+            }
+
+            n2 = _porcento;
+            mostrarNoDisplay(n2);
+
+        }
+
+        function mostrarNoDisplay(variavel) {
+            let display = document.querySelector('.display').innerHTML = variavel
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>
