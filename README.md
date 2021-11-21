@@ -1,3 +1,3 @@
 # mycalc
-Simple Calculator study
-try it online: https://rafaelr92f.github.io/mycalc/
+Simple Calculator study <br>
+try it online: <a target:"_blank">https://rafaelr92f.github.io/mycalc/ </a>
